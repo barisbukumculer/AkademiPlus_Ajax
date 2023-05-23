@@ -1,0 +1,135 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<h3>Ürün İşlemleri</h3>
+<br />
+<button type="button" id="btnproductlist" class="btn btn-primary">Ürün Listesi</button>
+<button type="button" id="btnproductadd" class="btn btn-success">Ürün Ekle</button>
+<button type="button" id="btnproductdelete" class="btn btn-danger">Ürün Sil</button>
+<button type="button" id="btnproductget" class="btn btn-info">Ürün Getir</button>
+<button type="button" id="btnproductupdate" class="btn btn-dark">Ürün Güncelle</button>
+<br />
+<br />
+
+<div id="productlist">
+    Ürün Listesi Buraya Gelecek
+</div>
+
+<br />
+
+<div >
+    <h3>Yeni Ürün Ekleme</h3>
+    <input type="text" class="form-control" placeholder="Ürünün Adını Giriniz" id="txtproductName"/>
+    <input type="text" class="form-control" placeholder="Ürünün Stoğunu Giriniz" id="txtproductStock"/>
+    <input type="text" class="form-control" placeholder="Ürünün Fiyatını Giriniz" id="txtproductPrice"/>
+    <input type="text" class="form-control" placeholder="Ürünün Markasını Giriniz" id="txtproductBrand"/>
+</div>
+<br />
+<div>
+    <h3>Ürün Silme Alanı</h3>
+    <input type="text" class="form-control" placeholder="Ürünün ID Giriniz" id="txtproductID" />
+</div>
+<br />
+<div>
+    <h3>ID'ye göre Ürün Getirme Alanı</h3>
+    <input type="text" class="form-control" placeholder="Ürünün ID Giriniz" id="txtgetID" />
+</div>
+<br />
+<div>
+    <h3>Güncellenecek Ürün Alanı</h3>
+    <input type="text" class="form-control" placeholder="Ürünün IDsini Giriniz" id="txtproductidedit" />
+    <br />
+    <input type="text" class="form-control" placeholder="Ürünün Adını Giriniz" id="txtproductNameedit" />
+     <br />
+    <input type="text" class="form-control" placeholder="Ürünün Stoğunu Giriniz" id="txtproductStockedit" />
+    <br />
+    <input type="text" class="form-control" placeholder="Ürünün Fiyatını Giriniz" id="txtproductPriceedit" />
+     <br />
+    <input type="text" class="form-control" placeholder="Ürünün Markasını Giriniz" id="txtproductBrandedit" />
+     <br />
+</div>
+<script>
+    $("#btnproductlist").click(function () {
+        $.ajax({
+            contentType: "application/Json",
+            dataType: "json",
+            type: "Get",
+            url: "/Product/ProductList/",
+            success: function (func1) {
+                let values = jQuery.parseJSON(func1);
+                console.log(values);
+                let tablehtml = "<table class=table table-bordered><tr><th>Ürün ID</th><th>Ürün Adı</th><th>Ürün Fiyatı</th><th>Stok Sayısı</th><th>Ürün Markası</th></tr>";
+                $.each(values,(index,value)=>{
+                    tablehtml+=`<tr><td>${value.ProductID}</td><td>${value.ProductName}</td><td>${value.ProductPrice}</td><td>${value.ProductStock}</td><td>${value.ProductBrand}</td></tr>`
+                });
+                tablehtml+="</table>";
+                $("#productlist").html(tablehtml);
+            }
+        });
+    });
+    $("#btnproductadd").click(function () {
+    let productvalues={
+        ProductName:$("#txtproductName").val(),
+            ProductBrand: $("#txtproductBrand").val(),
+            ProductPrice: $("#txtproductPrice").val(),
+            ProductStock: $("#txtproductStock").val()
+    };
+    $.ajax({
+        type:"post",
+        url:"/Product/AddProduct/",
+        data:productvalues,
+        success:function(func2){
+            let result=jQuery.parseJSON(func2);
+            swal("Ürün Başarılı Bir Şekilde Eklendi");
+        }
+    });
+    });
+    $("#btnproductdelete").click(function () {
+        let id = $("#txtproductID").val();
+        $.ajax({
+            url:"/Product/DeleteProduct/"+id,
+            type:"post",
+            contentType:"application/json",
+            dataType:"json",
+            success:function(func3){
+                swal("Ürün Başarılı Şekilde Silindi.");
+            }
+        });
+    });
+    $("#btnproductget").click(function (){
+        let id = $("#txtgetID").val();
+        $.ajax({
+            url: "/Product/GetByID/",
+            type: "get",
+            contentType: "application/json",
+            dataType: "json",
+            data:{ProductID:id},
+            success:function(func4){
+                let result=jQuery.parseJSON(func4);
+                console.log(result);
+            }
+        });
+
+    });
+    $("#btnproductupdate").click(function () {
+         let values = {
+            ProductID: $("#txtproductidedit").val(),
+            ProductName: $("#txtproductNameedit").val(),
+            ProductStock: $("#txtproductStockedit").val(),
+            ProductPrice: $("#txtproductPriceedit").val(),
+            ProductBrand: $("#txtproductBrandedit").val(),
+        };
+ 
+        $.ajax({
+            type: "post",
+            url: "/Product/UpdateProduct/",
+            data: values,
+            success: function (func5) {
+                swal("Tebrikler!", "Ürün Başarıyla Güncellendi!", "success");
+            }
+        });
+    });
+</script>
+
