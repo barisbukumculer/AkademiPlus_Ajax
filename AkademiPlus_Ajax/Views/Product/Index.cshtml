@@ -35,7 +35,10 @@
 <div>
     <h3>ID'ye göre Ürün Getirme Alanı</h3>
     <input type="text" class="form-control" placeholder="Ürünün ID Giriniz" id="txtgetID" />
+    <div id="getproduct">
+    </div>
 </div>
+
 <br />
 <div>
     <h3>Güncellenecek Ürün Alanı</h3>
@@ -109,9 +112,12 @@
             success:function(func4){
                 let result=jQuery.parseJSON(func4);
                 console.log(result);
+                let table2 = "<table class=table table-bordered><tr><th>Ürün ID</th><th>Ürün Adı</th><th>Ürün Fiyatı</th><th>Stok Sayısı</th><th>Ürün Markası</th></tr>";
+                table2 += `<tr><td>${result.ProductID}</td><td>${result.ProductName}</td><td>${result.ProductPrice}</td><td>${result.ProductStock}</td><td>${result.ProductBrand}</td></tr>`;
+                table2 += "</table>";
+                $("#getproduct").html(table2);
             }
         });
-
     });
     $("#btnproductupdate").click(function () {
          let values = {
